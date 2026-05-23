@@ -6,7 +6,6 @@ import cookie from '@fastify/cookie';
 import { MikroORM, SqlEntityManager } from '@mikro-orm/postgresql';
 import config from './mikro-orm.config.js';
 import { authRoutes } from './routes/auth.js';
-import { todoRoutes } from './routes/todos.js';
 import { transactionRoutes } from './routes/transactions.js';
 
 export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
