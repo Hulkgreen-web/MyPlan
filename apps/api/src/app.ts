@@ -44,7 +44,6 @@ export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
 
   // Register Routes
   await fastify.register(authRoutes, { em, prefix: '/auth' });
-  await fastify.register(todoRoutes, { em, prefix: '/todos' });
   await fastify.register(transactionRoutes, { em, prefix: '/transactions' });
 
   return fastify;
