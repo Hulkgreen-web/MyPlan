@@ -1,0 +1,30 @@
+{
+  "name": "my-plan",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "doctor": "node doctor.js",
+    "predev": "pnpm run doctor",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "daisyui": "^5.5.20",
+    "prettier": "^3.2.5",
+    "turbo": "^1.13.0",
+    "typescript": "^5.4.5"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "dependencies": {
+    "check-disk-space": "^3.4.0",
+    "dotenv": "^17.4.2",
+    "listr2": "^10.2.1",
+    "picocolors": "^1.1.1",
+    "semver": "^7.8.0"
+  }
+}

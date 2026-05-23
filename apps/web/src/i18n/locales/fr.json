@@ -1,0 +1,30 @@
+{
+  "login": {
+    "title": "Connexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "submit": "Connexion",
+    "no_account": "Pas de compte ?",
+    "register": "Inscrivez-vous"
+  },
+  "register": {
+    "title": "Inscription",
+    "name": "Nom",
+    "email": "Email",
+    "password": "Mot de passe",
+    "submit": "Inscription",
+    "has_account": "Déjà un compte ?",
+    "login": "Connectez-vous"
+  },
+  "todo": {
+    "title": "Ma Liste",
+    "placeholder": "Qu'y a-t-il à faire ?",
+    "add": "Ajouter",
+    "tasks": "Tâches",
+    "no_tasks": "Aucune tâche pour le moment...",
+    "remaining": "tâches restantes",
+    "total": "au total",
+    "logout": "Déconnexion",
+    "greeting": "Bonjour"
+  }
+}

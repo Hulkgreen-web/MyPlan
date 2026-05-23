@@ -1,0 +1,30 @@
+{
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "no_account": "No account?",
+    "register": "Register"
+  },
+  "register": {
+    "title": "Register",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Register",
+    "has_account": "Already have an account?",
+    "login": "Login"
+  },
+  "todo": {
+    "title": "My List",
+    "placeholder": "What needs to be done?",
+    "add": "Add",
+    "tasks": "Tasks",
+    "no_tasks": "No tasks yet...",
+    "remaining": "tasks remaining",
+    "total": "total",
+    "logout": "Logout",
+    "greeting": "Hello"
+  }
+}
