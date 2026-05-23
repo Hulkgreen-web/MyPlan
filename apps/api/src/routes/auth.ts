@@ -15,7 +15,8 @@ export const authRoutes: FastifyPluginAsync<{ em: SqlEntityManager }> = async (f
     const user = new User(data.email, data.name);
     user.password = await bcrypt.hash(data.password, 10);
     
-    await em.persistAndFlush(user);
+    em.persist(user);
+    await em.flush();
     return { user };
   });
 
@@ -35,7 +36,8 @@ export const authRoutes: FastifyPluginAsync<{ em: SqlEntityManager }> = async (f
       user, 
       new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     );
-    await em.persistAndFlush(refreshToken);
+    em.persist(refreshToken);
+    await em.flush();
 
     reply.setCookie('refreshToken', refreshTokenValue, {
       httpOnly: true,
@@ -74,7 +76,10 @@ export const authRoutes: FastifyPluginAsync<{ em: SqlEntityManager }> = async (f
     const token = request.cookies.refreshToken;
     if (token) {
       const storedToken = await em.findOne(RefreshToken, { token });
-      if (storedToken) await em.removeAndFlush(storedToken);
+      if (storedToken) {
+        em.remove(storedToken);
+        await em.flush();
+      }
     }
     reply.clearCookie('refreshToken');
     return { success: true };
