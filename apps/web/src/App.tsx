@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './AuthContext.tsx';
 import { LoginPage, RegisterPage } from './pages/Auth.tsx';
-import { TodoPage } from './pages/Todo.tsx';
+import { HomePage  } from './pages/Home.tsx';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
@@ -33,7 +33,7 @@ export default function App() {
             path="/" 
             element={
               <ProtectedRoute>
-                <TodoPage />
+                <HomePage />
               </ProtectedRoute>
             } 
           />
