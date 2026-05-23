@@ -19,13 +19,14 @@ export class Transaction {
     @Property({ type: 'string' })
     type!: string;
 
-    /*@ManyToOne(() => User)
-    user!: User;*/
+    @ManyToOne(() => User)
+    user!: User;
 
-    constructor(name: string, transactionDate: Date, amount: number, type: string) {
+    constructor(name: string, transactionDate: Date, amount: number, type: string, user: User) {
         this.name = name;
         this.transactionDate = transactionDate;
         this.amount = amount;
         this.type = type;
+        this.user = user;
     }
 }

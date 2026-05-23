@@ -4,7 +4,7 @@ import { TransactionType } from './utils/type-transaction.js';
 export const TransactionSchema = z.object({
     id: z.string().uuid(),
     name: z.string().min(1).max(100),
-    transactionDate: z.date().default(() => new Date()),
+    transactionDate: z.coerce.date().default(() => new Date()),
     amount: z.number().positive().refine((val) => /^\d+(\.\d{1,2})?$/.test(val.toString()), {
         message: 'Amount must have at most 2 decimal places',
     }),
