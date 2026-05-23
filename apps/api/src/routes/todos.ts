@@ -11,7 +11,8 @@ export const todoRoutes: FastifyPluginAsync<{ em: SqlEntityManager }> = async (f
   fastify.post('/', async (request, reply) => {
     const data = CreateTodoSchema.parse(request.body);
     const todo = new Todo(data.title, data.description);
-    await em.persistAndFlush(todo);
+    em.persist(todo);
+    await em.flush();
     return todo;
   });
 
@@ -29,8 +30,9 @@ export const todoRoutes: FastifyPluginAsync<{ em: SqlEntityManager }> = async (f
 
   fastify.delete('/:id', async (request, reply) => {
     const { id } = request.params as { id: string };
-    const todo = await em.getReference(Todo, id);
-    await em.removeAndFlush(todo);
+    const todo = await em.findOneOrFail(Todo, id);
+    em.remove(todo);
+    await em.flush();
     return { success: true };
   });
 };

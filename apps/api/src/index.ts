@@ -7,6 +7,7 @@ import { MikroORM } from '@mikro-orm/postgresql';
 import config from './mikro-orm.config.js';
 import { authRoutes } from './routes/auth.js';
 import { todoRoutes } from './routes/todos.js';
+import { transactionRoutes } from './routes/transactions.js';
 
 const start = async () => {
   const fastify = Fastify({ logger: true });
@@ -28,12 +29,12 @@ const start = async () => {
 
   // Database initialization
   const orm = await MikroORM.init(config);
-  await orm.getSchemaGenerator().updateSchema();
   const em = orm.em.fork();
 
   // Register Routes
   await fastify.register(authRoutes, { em, prefix: '/auth' });
   await fastify.register(todoRoutes, { em, prefix: '/todos' });
+  await fastify.register(transactionRoutes, { em, prefix: '/transactions' });
 
   try {
     await fastify.listen({ port: 3001, host: '0.0.0.0' });

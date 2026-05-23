@@ -10,8 +10,7 @@
     "doctor": "node doctor.js",
     "predev": "pnpm run doctor",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "lint": "turbo run lint"
   },
   "devDependencies": {
     "daisyui": "^5.5.20",
