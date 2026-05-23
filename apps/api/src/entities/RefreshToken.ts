@@ -1,4 +1,4 @@
-import { Entity, PrimaryKey, Property, ManyToOne } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, ManyToOne } from '@mikro-orm/decorators/legacy';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './User.js';
 
