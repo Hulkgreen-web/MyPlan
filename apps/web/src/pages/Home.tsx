@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../AuthContext.tsx';
 import { useTranslation } from 'react-i18next';
 import { ThemeSelector } from '../ThemeSelector.tsx';
-import { Sidebar } from '../components/sidebar.tsx';
+import { Sidebar } from '../components/Sidebar.tsx';
 import { BudgetSection } from '../components/BudgetSection.tsx';
 
 interface Transaction {
