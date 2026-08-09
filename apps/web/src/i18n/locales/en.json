@@ -16,15 +16,10 @@
     "has_account": "Already have an account?",
     "login": "Login"
   },
-  "todo": {
-    "title": "My List",
-    "placeholder": "What needs to be done?",
-    "add": "Add",
-    "tasks": "Tasks",
-    "no_tasks": "No tasks yet...",
-    "remaining": "tasks remaining",
-    "total": "total",
-    "logout": "Logout",
-    "greeting": "Hello"
+  "profile": {
+    "title": "Profile",
+    "name": "Name",
+    "email": "Email",
+    "change_password": "Change Password"
   }
 }

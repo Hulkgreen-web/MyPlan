@@ -17,7 +17,7 @@ export const authRoutes: FastifyPluginAsync<{ em: SqlEntityManager }> = async (f
     
     em.persist(user);
     await em.flush();
-    return { user };
+    return reply.status(201).send({ message: `User with email ${user.email} created successfully` });
   });
 
   fastify.post('/login', async (request, reply) => {
@@ -47,7 +47,7 @@ export const authRoutes: FastifyPluginAsync<{ em: SqlEntityManager }> = async (f
       maxAge: 7 * 24 * 60 * 60
     });
 
-    return { user, accessToken };
+    return reply.status(200).send({ message: 'Login successful', user, accessToken });
   });
 
   fastify.post('/refresh', async (request, reply) => {
@@ -60,16 +60,19 @@ export const authRoutes: FastifyPluginAsync<{ em: SqlEntityManager }> = async (f
     }
 
     const user = storedToken.user;
+    if (!user) {
+      return reply.status(401).send({ message: 'User not found' });
+    }
     const accessToken = fastify.jwt.sign({ sub: user.id, email: user.email }, { expiresIn: '15m' });
     
-    return { 
-      accessToken,
+    return reply.status(200).send({ 
       user: {
         id: user.id,
         email: user.email,
         name: user.name
-      }
-    };
+      },
+      accessToken
+    });
   });
 
   fastify.post('/logout', async (request, reply) => {
@@ -82,14 +85,14 @@ export const authRoutes: FastifyPluginAsync<{ em: SqlEntityManager }> = async (f
       }
     }
     reply.clearCookie('refreshToken');
-    return { success: true };
+    return reply.status(200).send({ message: 'Logged out successfully' });
   });
 
   fastify.get('/me', async (request, reply) => {
     try {
       await request.jwtVerify();
       const user = await em.findOne(User, { id: (request.user as any).sub });
-      return { user };
+      return reply.status(200).send({ user });
     } catch (err) {
       return reply.status(401).send({ message: 'Unauthorized' });
     }

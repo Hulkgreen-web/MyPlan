@@ -16,15 +16,10 @@
     "has_account": "Déjà un compte ?",
     "login": "Connectez-vous"
   },
-  "todo": {
-    "title": "Ma Liste",
-    "placeholder": "Qu'y a-t-il à faire ?",
-    "add": "Ajouter",
-    "tasks": "Tâches",
-    "no_tasks": "Aucune tâche pour le moment...",
-    "remaining": "tâches restantes",
-    "total": "au total",
-    "logout": "Déconnexion",
-    "greeting": "Bonjour"
+  "profile": {
+    "title": "Profil",
+    "name": "Nom",
+    "email": "Email",
+    "change_password": "Changer le mot de passe"
   }
 }

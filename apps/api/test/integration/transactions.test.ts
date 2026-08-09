@@ -21,6 +21,7 @@ describe('Transaction Routes', () => {
 
     const mockOrm = {
       em: mockEm,
+      schema: { update: vi.fn() },
       getSchemaGenerator: vi.fn().mockReturnValue({ updateSchema: vi.fn() }),
     } as unknown as MikroORM;
 
@@ -109,8 +110,6 @@ describe('Transaction Routes', () => {
       });
 
       expect(response.statusCode).toBe(400);
-      const body = response.json();
-      console.log('Response body:', body);
       expect(mockEm.persist).not.toHaveBeenCalled();
       expect(mockEm.flush).not.toHaveBeenCalled();
     });
