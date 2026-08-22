@@ -7,6 +7,7 @@ import { MikroORM, SqlEntityManager } from '@mikro-orm/postgresql';
 import config from './mikro-orm.config.js';
 import { authRoutes } from './routes/auth.js';
 import { transactionRoutes } from './routes/transactions.js';
+import { usersRoutes } from './routes/users.js';
 
 export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
   const fastify = Fastify({ logger: false });
@@ -39,11 +40,17 @@ export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
 
   // Database initialization
   const actualOrm = orm || await MikroORM.init(config);
+
+  if (!orm && process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
+    await actualOrm.schema.update();
+  }
+
   const em = actualOrm.em.fork() as SqlEntityManager;
 
   // Register Routes
   await fastify.register(authRoutes, { em, prefix: '/auth' });
   await fastify.register(transactionRoutes, { em, prefix: '/transactions' });
+  await fastify.register(usersRoutes, { em, prefix: '/users' });
 
   return fastify;
 };

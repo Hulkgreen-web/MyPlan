@@ -14,7 +14,21 @@ export const createMockEntityManager = (initialData: TransactionMock[] = mockTra
             return dbStore;
         }),
 
+        findAll: vi.fn().mockImplementation(async (entity: any) => {
+            return userStore;
+        }),
+
+        findOne: vi.fn().mockImplementation(async (entity: any, filter: any) => {
+            if (filter === 'user1@example.com' || filter?.email === 'user1@example.com') {
+                return userStore.find((u) => u.email === 'user1@example.com');
+            }
+        }),
+
         findOneOrFail: vi.fn().mockImplementation(async (entity: any, filter: any) => {
+            if (filter === 'user1@example.com' || filter?.email === 'user1@example.com') {
+                return userStore.find((u) => u.email === 'user1@example.com');
+            }
+            
             if (filter === 'user-1' || filter?.id === 'user-1') {
                 return userStore.find((u) => u.id === 'user-1');
             }

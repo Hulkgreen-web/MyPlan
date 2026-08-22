@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ThemeSelector } from '../ThemeSelector.tsx';
 import { Sidebar } from '../components/Sidebar.tsx';
 import { BudgetSection } from '../components/BudgetSection.tsx';
+import { Profile } from '../components/Profile.tsx';
 
 interface Transaction {
   id: string;
@@ -18,6 +19,7 @@ export const HomePage = () => {
   const { user, login, logout } = useAuth(); 
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState<'home' | 'transactions' | 'savings' | 'profile'>('home');
   const [budget, setBudget] = useState(2299.50);
 
   const transactions: Transaction[] = [
@@ -41,7 +43,12 @@ export const HomePage = () => {
   return (
     <div className="flex h-screen bg-base-300 text-base-content font-sans overflow-hidden">
       
-      <Sidebar isOpen={isSidebarOpen} currentLang={currentLang} />
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        currentLang={currentLang} 
+        activeTab={activeTab}
+        onTabChange={(tab) => setActiveTab(tab as any)}
+      />
 
       <main className="flex-1 flex flex-col relative overflow-y-auto">
         
@@ -99,35 +106,50 @@ export const HomePage = () => {
         </header>
 
         <section className="flex-1 flex flex-col items-center pt-32 pb-10 px-8">
-          <h1 className="text-5xl font-bold mb-4 tracking-tight">
-            {currentLang === 'FR' ? 'Bienvenue' : 'Welcome'}
-          </h1>
-          
-          {/* Composant Budget Isolé */}
-          <BudgetSection 
-            budget={budget} 
-            currentLang={currentLang} 
-            onAddBudget={handleAddBudget} 
-          />
+          {activeTab === 'profile' ? (
+            <Profile />
+          ) : activeTab === 'home' ? (
+            <>
+              <h1 className="text-5xl font-bold mb-4 tracking-tight">
+                {currentLang === 'FR' ? 'Bienvenue' : 'Welcome'}
+              </h1>
+              
+              {/* Composant Budget Isolé */}
+              <BudgetSection 
+                budget={budget} 
+                currentLang={currentLang} 
+                onAddBudget={handleAddBudget} 
+              />
 
-          <div className="w-full max-w-3xl bg-base-100 rounded-2xl p-8 border border-base-content/10 shadow-2xl">
-            <h2 className="text-xl font-semibold mb-6 text-base-content">
-              {currentLang === 'FR' ? 'Dernières transactions' : 'Latest transactions'}
-            </h2>
-            <ul className="space-y-3">
-              {transactions.map((tx) => (
-                <li key={tx.id} className="flex justify-between items-center bg-base-200 p-5 rounded-xl border border-base-content/5 hover:border-base-content/20 transition-colors">
-                  <div className="flex flex-col gap-1">
-                    <span className="font-semibold text-lg">{tx.name}</span>
-                    <span className="text-xs text-base-content/60">{tx.date}</span>
-                  </div>
-                  <span className={`font-bold text-xl ${tx.type === 'income' ? 'text-success' : 'text-error'}`}>
-                    {tx.type === 'income' ? '+' : '-'}{tx.amount.toFixed(2)} €
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+              <div className="w-full max-w-3xl bg-base-100 rounded-2xl p-8 border border-base-content/10 shadow-2xl">
+                <h2 className="text-xl font-semibold mb-6 text-base-content">
+                  {currentLang === 'FR' ? 'Dernières transactions' : 'Latest transactions'}
+                </h2>
+                <ul className="space-y-3">
+                  {transactions.map((tx) => (
+                    <li key={tx.id} className="flex justify-between items-center bg-base-200 p-5 rounded-xl border border-base-content/5 hover:border-base-content/20 transition-colors">
+                      <div className="flex flex-col gap-1">
+                        <span className="font-semibold text-lg">{tx.name}</span>
+                        <span className="text-xs text-base-content/60">{tx.date}</span>
+                      </div>
+                      <span className={`font-bold text-xl ${tx.type === 'income' ? 'text-success' : 'text-error'}`}>
+                        {tx.type === 'income' ? '+' : '-'}{tx.amount.toFixed(2)} €
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          ) : (
+            <div className="text-center p-12 bg-base-100 rounded-2xl border border-base-content/10 shadow-xl max-w-md">
+              <h3 className="text-2xl font-bold mb-2">
+                {currentLang === 'FR' ? 'Bientôt disponible !' : 'Coming soon!'}
+              </h3>
+              <p className="text-base-content/60">
+                {currentLang === 'FR' ? 'Cette section est en cours de développement.' : 'This section is currently under development.'}
+              </p>
+            </div>
+          )}
         </section>
       </main>
     </div>
