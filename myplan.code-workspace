@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "ROOT",
+      "path": ".",
+    },
+    {
+      "name": "Frontend",
+      "path": "./apps/web",
+    },
+    {
+      "name": "Backend",
+      "path": "./apps/api",
+    },
+    {
+      "name": "Shared",
+      "path": "./packages/shared",
+    }
+  ],
+}
