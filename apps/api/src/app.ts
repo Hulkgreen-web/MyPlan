@@ -10,7 +10,11 @@ import { transactionRoutes } from './routes/transactions.js';
 import { usersRoutes } from './routes/users.js';
 
 export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
-  const fastify = Fastify({ logger: false });
+  const fastify = Fastify({ logger: {
+    transport: {
+      target: "@fastify/one-line-logger",
+    },
+  }});
   
   // Plugins
   await fastify.register(cors, {
