@@ -1,19 +1,14 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-let accessToken: string | null = localStorage.getItem('accessToken');
+let accessToken: string | null = null;
 
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
-  if (token) {
-    localStorage.setItem('accessToken', token);
-  } else {
-    localStorage.removeItem('accessToken');
-  }
 };
 
 export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   const headers = {
-    'Content-Type': 'application/json',
+    ...(options.body ? { 'Content-Type': 'application/json' } : {}),
     ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     ...options.headers,
   };

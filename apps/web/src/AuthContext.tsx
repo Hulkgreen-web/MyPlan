@@ -20,25 +20,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // 1. Tenter de rafraîchir le token (si cookie présent côté navigateur)
+        // 1. Tenter de rafraîchir le token en mémoire via le cookie HttpOnly
         const res = await apiFetch('/auth/refresh', { method: 'POST' });
         
         if (res.ok) {
           const { accessToken, user } = await res.json();
           setAccessToken(accessToken);
           setUser(user);
-        } else if (localStorage.getItem('accessToken')) {
-          // 2. Si le refresh a échoué mais qu'on a un token en local, tenter de l'utiliser
-          const userRes = await apiFetch('/auth/me');
-          if (userRes.ok) {
-            const { user } = await userRes.json();
-            setUser(user);
-          } else {
-            setAccessToken(null); // Token local invalide
-          }
+        } else {
+          setAccessToken(null);
+          setUser(null);
         }
       } catch (err) {
         console.error("Auth init failed", err);
+        setAccessToken(null);
+        setUser(null);
       } finally {
         setLoading(false);
       }
