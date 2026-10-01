@@ -1,9 +1,5 @@
 import { z } from 'zod';
+import { UserResponseSchema } from './auth.js';
 
-export const UserSchema = z.object({
-    id: z.string().uuid(),
-    name: z.string().min(1).max(100),
-    email: z.string().email(),
-});
-
-export type User = z.infer<typeof UserSchema>;
+export const UsersListResponseSchema = z.array(UserResponseSchema);
+export type UsersListResponse = z.infer<typeof UsersListResponseSchema>;

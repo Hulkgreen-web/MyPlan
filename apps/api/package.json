@@ -26,6 +26,7 @@
     "@mikro-orm/postgresql": "catalog:",
     "bcrypt": "catalog:",
     "fastify": "catalog:",
+    "fastify-type-provider-zod": "catalog:",
     "reflect-metadata": "catalog:",
     "shared": "workspace:*",
     "uuid": "catalog:",

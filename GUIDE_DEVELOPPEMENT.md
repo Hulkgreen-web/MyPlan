@@ -2,7 +2,7 @@
 
 Ce projet est un monorepo moderne utilisant **pnpm**, **Turbo**, **Fastify**, **MikroORM** et **React**.
 
-## 🚀 Démarrage Rapide
+## Démarrage Rapide
 
 ### Prérequis
 - Node.js (v18+)
@@ -25,7 +25,7 @@ pnpm dev
 
 ---
 
-## 🏗️ Structure du Monorepo
+## Structure du Monorepo
 
 - `apps/api` : Backend Fastify avec MikroORM (PostgreSQL).
 - `apps/web` : Frontend React avec Vite et TailwindCSS.
@@ -33,7 +33,7 @@ pnpm dev
 
 ---
 
-## 🛠️ Ajouter une nouvelle fonctionnalité (Étape par étape)
+## Ajouter une nouvelle fonctionnalité (Étape par étape)
 
 Imaginons que vous vouliez ajouter une entité **"User"**.
 
@@ -72,15 +72,22 @@ export class User {
 Ajoutez cette entité dans `apps/api/mikro-orm.config.ts`.
 
 ### 3. Ajouter une route dans l'API
-Dans `apps/api/src/index.ts` :
+Exemple dans une route Fastify :
 ```typescript
-import { CreateUserSchema } from 'shared';
+import { CreateUserSchema, UserResponseSchema } from 'shared';
 
-fastify.post('/users', async (request) => {
-  const data = CreateUserSchema.parse(request.body);
+fastify.post('/users', {
+  schema: {
+    body: CreateUserSchema,
+    response: {
+      201: UserResponseSchema,
+    },
+  },
+}, async (request, reply) => {
+  const data = request.body; // Déjà typé et validé par Fastify
   const user = new User(data);
   await em.persistAndFlush(user);
-  return user;
+  return reply.status(201).send(user);
 });
 ```
 
@@ -94,14 +101,14 @@ const user: CreateUser = { email: 'test@test.com', name: 'John' };
 
 ---
 
-## ⚙️ Configuration Technique Importante
+## Configuration Technique Importante
 
 ### ESM & Décorateurs
 Le projet utilise le mode **ESM** (`"type": "module"`). Pour le développement, nous utilisons `tsx` au lieu de `ts-node` pour une meilleure gestion de l'ESM et de la rapidité.
 
 Comme `tsx` utilise `esbuild` en interne, il ne supporte pas `emitDecoratorMetadata`. Vous devez donc **toujours spécifier le type explicitement** dans les décorateurs MikroORM :
 ```typescript
-// ✅ CORRECT
+// CORRECT
 @Property({ type: 'string' })
 name!: string;
 
@@ -124,7 +131,7 @@ En production, il est recommandé d'utiliser les migrations MikroORM.
 
 ---
 
-## 🔐 Authentification
+## Authentification
 
 Le projet inclut un système d'authentification complet basé sur les JWT (JSON Web Tokens).
 
