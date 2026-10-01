@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { TransactionType } from './utils/type-transaction.js';
 
 export const TransactionSchema = z.object({
-    id: z.string().uuid(),
+    id: z.string(),
     name: z.string().min(1).max(100),
     transactionDate: z.coerce.date().default(() => new Date()),
     amount: z.number().positive().refine((val) => /^\d+(\.\d{1,2})?$/.test(val.toString()), {
@@ -20,6 +20,15 @@ export const CreateTransactionSchema = TransactionSchema.pick({
 
 export const UpdateTransactionSchema = CreateTransactionSchema.partial();
 
+export const TransactionResponseSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    transactionDate: z.coerce.date(),
+    amount: z.number(),
+    type: z.string(),
+});
+
 export type Transaction = z.infer<typeof TransactionSchema>;
 export type CreateTransaction = z.infer<typeof CreateTransactionSchema>;
 export type UpdateTransaction = z.infer<typeof UpdateTransactionSchema>;
+export type TransactionResponse = z.infer<typeof TransactionResponseSchema>;

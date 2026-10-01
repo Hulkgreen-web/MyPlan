@@ -10,6 +10,6 @@ export default defineConfig({
   password: 'password',
   host: process.env.DB_HOST || 'localhost',
   port: 5432,
-  debug: true,
+  debug: false,
   allowGlobalContext: true, // Simplified for boilerplate
 });
