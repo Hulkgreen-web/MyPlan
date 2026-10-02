@@ -17,4 +17,7 @@
       "path": "./packages/shared",
     }
   ],
+  "settings": {
+    "remote.autoForwardPortsFallback": 0
+  },
 }

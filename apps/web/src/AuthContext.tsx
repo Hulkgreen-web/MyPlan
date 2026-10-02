@@ -1,69 +1,50 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, LoginInput, RegisterInput, AuthResponse } from 'shared';
-import { apiFetch, setAccessToken } from './api.ts';
+import { User, LoginCredentials, RegisterParams } from '@domain/auth/models/user.model.ts';
+import { useAuthUseCases } from '@/CompositionRoot.tsx';
 
 interface AuthContextType {
-  user: Omit<User, 'password'> | null;
+  user: User | null;
   loading: boolean;
-  login: (data: LoginInput) => Promise<void>;
-  register: (data: RegisterInput) => Promise<void>;
+  login: (data: LoginCredentials) => Promise<void>;
+  register: (data: RegisterParams) => Promise<void>;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<Omit<User, 'password'> | null>(null);
+  const { loginUseCase, registerUseCase, logoutUseCase, refreshSessionUseCase } = useAuthUseCases();
+
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Vérifier si on est déjà connecté au chargement
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // 1. Tenter de rafraîchir le token en mémoire via le cookie HttpOnly
-        const res = await apiFetch('/auth/refresh', { method: 'POST' });
-        
-        if (res.ok) {
-          const { accessToken, user } = await res.json();
-          setAccessToken(accessToken);
-          setUser(user);
-        } else {
-          setAccessToken(null);
-          setUser(null);
-        }
+        const session = await refreshSessionUseCase.execute();
+        setUser(session ? session.user : null);
       } catch (err) {
-        console.error("Auth init failed", err);
-        setAccessToken(null);
+        console.error('Auth initialization failed', err);
         setUser(null);
       } finally {
         setLoading(false);
       }
     };
-    initAuth();
-  }, []);
 
-  const login = async (data: LoginInput) => {
-    const res = await apiFetch('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error('Identifiants invalides');
-    const { user, accessToken }: AuthResponse = await res.json();
-    setAccessToken(accessToken);
-    setUser(user);
+    initAuth();
+  }, [refreshSessionUseCase]);
+
+  const login = async (data: LoginCredentials) => {
+    const session = await loginUseCase.execute(data);
+    setUser(session.user);
   };
 
-  const register = async (data: RegisterInput) => {
-    const res = await apiFetch('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error("Erreur lors de l'inscription");
+  const register = async (data: RegisterParams) => {
+    await registerUseCase.execute(data);
   };
 
   const logout = async () => {
-    await apiFetch('/auth/logout', { method: 'POST' });
-    setAccessToken(null);
+    await logoutUseCase.execute();
     setUser(null);
   };
 

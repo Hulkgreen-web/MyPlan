@@ -1,0 +1,67 @@
+{
+  "common": {
+    "welcome_user": "Welcome, {{name}}",
+    "cancel": "Cancel"
+  },
+  "nav": {
+    "home": "Home",
+    "transactions": "Transactions",
+    "savings": "Savings",
+    "profile": "Profile"
+  },
+  "home": {
+    "welcome": "Welcome",
+    "recent_transactions": "Latest transactions",
+    "no_transactions": "No recent transactions"
+  },
+  "transactions": {
+    "title": "Transactions",
+    "create_title": "New Transaction",
+    "new": "New transaction",
+    "type_expense": "Expense",
+    "type_income": "Income",
+    "label_name": "Description",
+    "label_amount": "Amount (€)",
+    "label_date": "Date",
+    "submit_create": "Create",
+    "no_transactions": "No transactions yet.",
+    "filter_all": "All",
+    "filter_income": "Income",
+    "filter_expense": "Expenses",
+    "total": "Total: {{count}} transaction(s)"
+  },
+  "savings": {
+    "coming_soon": "Coming soon!",
+    "description": "This section is currently under development."
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "todo": {
+    "logout": "Logout"
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "no_account": "No account?",
+    "register": "Register"
+  },
+  "register": {
+    "title": "Register",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Register",
+    "has_account": "Already have an account?",
+    "login": "Login"
+  },
+  "profile": {
+    "title": "Profile",
+    "name": "Name",
+    "email": "Email",
+    "change_password": "Change Password"
+  }
+}

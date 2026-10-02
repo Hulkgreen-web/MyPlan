@@ -1,0 +1,24 @@
+export class UserId {
+  private readonly _value: string;
+
+  constructor(value: string) {
+    if (!value || typeof value !== 'string' || value.trim().length === 0) {
+      throw new Error('User ID cannot be empty');
+    }
+    this._value = value.trim();
+    Object.freeze(this);
+  }
+
+  get value(): string {
+    return this._value;
+  }
+
+  equals(other?: UserId | null): boolean {
+    if (!other) return false;
+    return this._value === other.value;
+  }
+
+  toString(): string {
+    return this._value;
+  }
+}
