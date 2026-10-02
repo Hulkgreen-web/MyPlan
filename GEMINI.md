@@ -22,11 +22,22 @@ MyPlan/
 │   │   │   └── mikro-orm.config.ts # MikroORM database configuration
 │   │   └── test/               # Vitest integration tests & mocks
 │   │
-│   └── web/                    # React Frontend (Vite + TailwindCSS)
+│   └── web/                    # React Frontend (Vite + TailwindCSS + Clean Architecture)
 │       └── src/
-│           ├── components/     # UI components (DaisyUI)
-│           ├── pages/          # Views & layouts
-│           └── AuthContext.tsx # Client-side auth management
+│           ├── CompositionRoot.tsx # Dependency injection wiring & providers
+│           ├── domain/         # Business domain layer (pure TS, zero UI dependencies)
+│           │   ├── auth/       # Value objects, User entity, AuthRepository port, UseCases
+│           │   └── transactions/# Value objects, Transaction entity, TransactionRepository port, UseCases
+│           ├── data/           # Data access layer
+│           │   ├── auth/       # AuthApi, AuthMapper, AuthRepository implementation
+│           │   └── transactions/# TransactionApi, TransactionMapper, TransactionRepository implementation
+│           ├── presentation/   # Presentation UI & ViewModel layer
+│           │   ├── components/ # Pure declarative UI components (auth, transactions, layout, logo)
+│           │   ├── hooks/      # ViewModels / Container logic (useProfile, useTransactions, etc.)
+│           │   ├── pages/      # Routed views (Home, auth/*, transactions/*, Savings)
+│           │   └── i18n/       # Localization configuration & dictionary files
+│           ├── AuthContext.tsx # Context wrapping Use Cases for React lifecycle
+│           └── api.ts          # Base HTTP client with transparent token refresh
 │
 ├── packages/
 │   └── shared/                 # Shared domain logic
@@ -101,6 +112,44 @@ MyPlan/
 - All API contracts, Zod schemas, input types, and response types are centralized in `packages/shared`.
 - Both `apps/api` and `apps/web` import directly from `shared`.
 - Never duplicate schemas or types between front and back.
+
+### 5. Mandatory Frontend Clean Architecture Rules (STRICT — ALWAYS FOLLOW NO MATTER WHAT)
+Every feature, module, or screen on the frontend MUST follow Clean Architecture principles without exception:
+
+#### A. Layer Responsibilities & Naming Conventions
+1. **Domain Layer (`apps/web/src/domain/<concept>/`)**:
+   - Zero dependencies on React, UI libraries, HTTP clients, or frameworks. Pure TypeScript only.
+   - **Value Objects (`value-objects/*-*.vo.ts`)**: Self-validating, immutable objects representing single attributes (e.g. `TransactionAmount`, `TransactionName`, `UserEmail`, `UserPassword`). Must throw domain errors upon invalid input and expose a `.value` getter.
+   - **Models / Entities (`models/*.model.ts`)**: Aggregate domain state and business invariants. Expose primitive and VO getters. Use `static create(...)` factory methods.
+   - **Repository Ports (`repositories/*.repository.ts`)**: Domain interfaces declaring required persistence/data operations.
+   - **Use Cases (`usecases/*-*.usecase.ts`)**: Single-responsibility application operations exposing an `execute(...)` method. Strictly depend on repository interfaces.
+
+2. **Data Layer (`apps/web/src/data/<concept>/`)**:
+   - Implements domain repository interfaces and communicates with external APIs.
+   - **API Client (`api/*Api.ts`, `api/*ApiInterface.ts`)**: Handles HTTP requests using `@/api.ts` (`apiFetch`). Returns shared DTOs from `packages/shared`.
+   - **Mappers (`mappers/*Mapper.ts`)**: Pure conversion functions translating shared DTOs into Domain Entities/Models and vice-versa.
+   - **Repositories (`repositories/*Repository.ts`)**: Concrete classes implementing domain repository ports by calling API datasources and transforming data with mappers.
+
+3. **Dependency Injection (`apps/web/src/CompositionRoot.tsx`)**:
+   - The single place where all datasources, mappers, repositories, and use cases are instantiated.
+   - NEVER instantiate repositories or use cases directly inside React components or hooks.
+   - Exposes typed context hooks (`useTransactionUseCases()`, `useAuthUseCases()`) consumed exclusively by presentation hooks.
+
+4. **Presentation Layer (`apps/web/src/presentation/`)**:
+   - **Feature-based Subdirectories**: Presentation MUST mirror domain concepts with subfolders:
+     - `components/<concept>/components/` (e.g. `components/transactions/components/`, `components/auth/components/`)
+     - `hooks/<concept>/` (e.g. `hooks/transactions/`, `hooks/auth/`)
+     - `pages/<concept>/` (e.g. `pages/transactions/`, `pages/auth/`)
+   - **Hook-as-ViewModel (Container-Presentational)**: TSX files MUST be purely declarative view templates. NEVER write inline fetch calls, complex state reducers, or business rules in TSX components. All logic, validation handling, and use-case execution MUST live in dedicated custom hooks (`useTransactionListPage`, `useProfile`, etc.).
+   - **DaisyUI & Tailwind**: All UI components must prioritize semantic DaisyUI components (cards, badges, modals, heroes, tabs).
+
+#### B. Path Aliases (Mandatory)
+Always use configured path aliases instead of multi-level relative paths (`../../../`):
+- `@/*` -> `apps/web/src/*` (e.g. `@/AuthContext.tsx`, `@/CompositionRoot.tsx`, `@/api.ts`)
+- `@domain/*` -> `apps/web/src/domain/*`
+- `@data/*` -> `apps/web/src/data/*`
+- `@presentation/*` -> `apps/web/src/presentation/*`
+- `shared` -> `packages/shared/src/index.ts`
 
 ---
 
