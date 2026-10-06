@@ -5,6 +5,7 @@ packages:
 allowBuilds:
   bcrypt: true
   esbuild: true
+  msw: true
 
 catalog:
   "i18next": "^26.2.0"

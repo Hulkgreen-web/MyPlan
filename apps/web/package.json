@@ -23,9 +23,15 @@
     "@vitejs/plugin-react": "catalog:",
     "autoprefixer": "catalog:",
     "daisyui": "catalog:",
+    "msw": "^2.15.0",
     "postcss": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

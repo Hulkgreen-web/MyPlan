@@ -1,0 +1,17 @@
+[build]
+  command = "pnpm --filter web build"
+  publish = "apps/web/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[context.production.environment]
+  VITE_ENABLE_MOCKS = "false"
+
+[context.demo.environment]
+  VITE_ENABLE_MOCKS = "true"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
