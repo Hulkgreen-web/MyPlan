@@ -21,6 +21,8 @@
     "@fastify/cors": "catalog:",
     "@fastify/jwt": "catalog:",
     "@fastify/one-line-logger": "^2.2.0",
+    "@fastify/swagger": "catalog:",
+    "@fastify/swagger-ui": "catalog:",
     "@mikro-orm/core": "catalog:",
     "@mikro-orm/decorators": "catalog:",
     "@mikro-orm/postgresql": "catalog:",

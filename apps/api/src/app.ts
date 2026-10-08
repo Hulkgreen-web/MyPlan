@@ -3,9 +3,12 @@ import Fastify, { FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import cookie from '@fastify/cookie';
+import fastifySwagger from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 import { MikroORM, SqlEntityManager } from '@mikro-orm/postgresql';
 import { serializerCompiler, validatorCompiler, ZodTypeProvider } from 'fastify-type-provider-zod';
 import config from './mikro-orm.config.js';
+import { swaggerOptions, swaggerUiOptions } from './config/swagger.config.js';
 import { authRoutes } from './routes/auth/index.js';
 import { transactionRoutes } from './routes/transactions/index.js';
 import { usersRoutes } from './routes/users/index.js';
@@ -36,6 +39,10 @@ export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
     secret: 'cookie-secret',
     parseOptions: {}
   });
+
+  // Swagger Documentation
+  await fastify.register(fastifySwagger, swaggerOptions);
+  await fastify.register(fastifySwaggerUi, swaggerUiOptions);
 
   fastify.setErrorHandler((error, request, reply) => {
     if (error.constructor.name === 'ZodError') {
