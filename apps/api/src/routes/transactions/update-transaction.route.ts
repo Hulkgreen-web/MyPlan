@@ -3,8 +3,11 @@ import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { SqlEntityManager } from '@mikro-orm/postgresql';
 import { Transaction } from '../../entities/Transaction.js';
 import { UpdateTransactionSchema, TransactionResponseSchema, MessageResponseSchema } from 'shared';
+import { TransactionsService } from '../../services/transactions.service.js';
 
 export const updateTransactionRoute: FastifyPluginAsyncZod<{ em: SqlEntityManager }> = async (fastify, { em }) => {
+  const transactionsService = new TransactionsService(em);
+
   fastify.patch('/:id', {
     schema: {
       params: z.object({
@@ -19,11 +22,7 @@ export const updateTransactionRoute: FastifyPluginAsyncZod<{ em: SqlEntityManage
   }, async (request) => {
     const userId = (request.user as any).sub;
     const { id } = request.params;
-    const transactionToUpdate = await em.findOneOrFail(Transaction, { id, user: userId });
-    const data = request.body;
-
-    em.assign(transactionToUpdate, data);
-    await em.flush();
-    return transactionToUpdate;
+    return await transactionsService.update(userId, id, request.body);
+   
   });
 };

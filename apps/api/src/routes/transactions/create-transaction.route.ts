@@ -1,10 +1,11 @@
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { SqlEntityManager } from '@mikro-orm/postgresql';
-import { Transaction } from '../../entities/Transaction.js';
-import { User } from '../../entities/User.js';
 import { CreateTransactionSchema, TransactionResponseSchema, MessageResponseSchema } from 'shared';
+import { TransactionsService } from '../../services/transactions.service.js';
 
 export const createTransactionRoute: FastifyPluginAsyncZod<{ em: SqlEntityManager }> = async (fastify, { em }) => {
+  const transactionsService = new TransactionsService(em);
+
   fastify.post('/', {
     schema: {
       body: CreateTransactionSchema,
@@ -16,13 +17,6 @@ export const createTransactionRoute: FastifyPluginAsyncZod<{ em: SqlEntityManage
     },
   }, async (request) => {
     const userId = (request.user as any).sub;
-    const user = await em.findOneOrFail(User, userId);
-
-    const data = request.body;
-    const transaction = new Transaction(data.name, data.transactionDate, data.amount, data.type, user);
-
-    em.persist(transaction);
-    await em.flush();
-    return transaction;
+    return await transactionsService.create(userId, request.body);
   });
 };

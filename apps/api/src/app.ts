@@ -3,12 +3,16 @@ import Fastify, { FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import cookie from '@fastify/cookie';
+import fastifySwagger from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 import { MikroORM, SqlEntityManager } from '@mikro-orm/postgresql';
 import { serializerCompiler, validatorCompiler, ZodTypeProvider } from 'fastify-type-provider-zod';
 import config from './mikro-orm.config.js';
+import { swaggerOptions, swaggerUiOptions } from './config/swagger.config.js';
 import { authRoutes } from './routes/auth/index.js';
 import { transactionRoutes } from './routes/transactions/index.js';
 import { usersRoutes } from './routes/users/index.js';
+import { categoriesRoutes } from './routes/categories/index.js';
 
 export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
   const fastify = Fastify({
@@ -37,6 +41,10 @@ export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
     parseOptions: {}
   });
 
+  // Swagger Documentation
+  await fastify.register(fastifySwagger, swaggerOptions);
+  await fastify.register(fastifySwaggerUi, swaggerUiOptions);
+
   fastify.setErrorHandler((error, request, reply) => {
     if (error.constructor.name === 'ZodError') {
       return reply.status(400).send({
@@ -52,6 +60,9 @@ export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
     }
     if (error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
       return reply.status(error.statusCode).send({ message: error.message });
+    }
+    if ((error as any).name === 'NotFoundError') {
+      return reply.status(404).send({ message: error.message });
     }
     fastify.log.error(error);
     reply.status(500).send({ message: 'Internal Server Error' });
@@ -70,6 +81,7 @@ export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
   await fastify.register(authRoutes, { em, prefix: '/auth' });
   await fastify.register(transactionRoutes, { em, prefix: '/transactions' });
   await fastify.register(usersRoutes, { em, prefix: '/users' });
+  await fastify.register(categoriesRoutes, { em, prefix: '/categories' });
 
   return fastify;
 };

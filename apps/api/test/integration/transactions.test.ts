@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { buildApp } from '../../src/app.js';
 import { MikroORM } from '@mikro-orm/postgresql';
 import { mockTransaction1, mockTransactionList } from '../mocks/transactionsMock.js';
+import { mockCategory1 } from '../mocks/categoriesMock.js';
 import { createMockEntityManager } from '../mocks/entityManagerMock.js';
 
 vi.mock('@mikro-orm/postgresql', async () => {
@@ -35,7 +36,7 @@ describe('Transaction Routes', () => {
     });
   });
 
-  afterEach( () => {
+  afterEach(() => {
     vi.clearAllMocks();
   });
 
@@ -48,9 +49,10 @@ describe('Transaction Routes', () => {
 
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
-      
+
       expect(body).toHaveLength(2);
       expect(body[0].name).toBe(mockTransaction1.name);
+      expect(body[0].category).toBe(mockTransaction1.category.name);
       expect(mockEm.find).toHaveBeenCalledWith(expect.anything(), { user: 'user-1' }, expect.anything());
     });
 
@@ -77,6 +79,7 @@ describe('Transaction Routes', () => {
         amount: 3.5,
         type: 'expense',
         transactionDate: '2024-05-23T10:00:00.000Z',
+        category: 'category-1',
       };
 
       const response = await app.inject({
@@ -90,6 +93,7 @@ describe('Transaction Routes', () => {
       expect(body.name).toBe(payload.name);
       expect(body.amount).toBe(payload.amount);
       expect(body.type).toBe(payload.type);
+      expect(body.category).toBe(mockCategory1.name);
       expect(new Date(body.transactionDate).toISOString()).toBe(payload.transactionDate);
       expect(mockEm.persist).toHaveBeenCalled();
       expect(mockEm.flush).toHaveBeenCalled();
@@ -101,6 +105,7 @@ describe('Transaction Routes', () => {
         amount: -15.20,
         type: 'expense',
         transactionDate: '2024-05-23T10:00:00.000Z',
+        category: 'category-1',
       };
 
       const response = await app.inject({
@@ -124,6 +129,7 @@ describe('Transaction Routes', () => {
         amount: 3.5,
         type: 'expense',
         transactionDate: '2024-05-23T10:00:00.000Z',
+        category: 'category-1',
       };
 
       const response = await app.inject({
