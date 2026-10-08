@@ -12,7 +12,7 @@ export class Category {
     @Property({ type: 'string', length: 100 })
     name!: string;
 
-    @Property({ type: 'number' })
+    @Property({ type: 'double' })
     estimatedAmount!: number;
 
     @OneToMany(() => Transaction, transaction => transaction.category)

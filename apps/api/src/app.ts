@@ -12,6 +12,7 @@ import { swaggerOptions, swaggerUiOptions } from './config/swagger.config.js';
 import { authRoutes } from './routes/auth/index.js';
 import { transactionRoutes } from './routes/transactions/index.js';
 import { usersRoutes } from './routes/users/index.js';
+import { categoriesRoutes } from './routes/categories/index.js';
 
 export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
   const fastify = Fastify({
@@ -77,6 +78,7 @@ export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
   await fastify.register(authRoutes, { em, prefix: '/auth' });
   await fastify.register(transactionRoutes, { em, prefix: '/transactions' });
   await fastify.register(usersRoutes, { em, prefix: '/users' });
+  await fastify.register(categoriesRoutes, { em, prefix: '/categories' });
 
   return fastify;
 };

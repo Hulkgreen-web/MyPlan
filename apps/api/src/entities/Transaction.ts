@@ -14,7 +14,7 @@ export class Transaction {
     @Property({ type: 'datetime'})
     transactionDate!: Date;
 
-    @Property({ type: 'number' })
+    @Property({ type: 'double' })
     amount!: number;
 
     @Property({ type: 'string' })
