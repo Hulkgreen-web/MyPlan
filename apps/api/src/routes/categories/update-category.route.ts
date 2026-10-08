@@ -15,7 +15,9 @@ export const updateCategoryRoute: FastifyPluginAsyncZod<{ em: SqlEntityManager }
             body: UpdateCategorySchema,
             response: {
                 200: CategoryResponseSchema,
+                400: MessageResponseSchema,
                 401: MessageResponseSchema,
+                404: MessageResponseSchema,
             },
         },
     }, async (request) => {

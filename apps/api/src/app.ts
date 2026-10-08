@@ -61,6 +61,9 @@ export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
     if (error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
       return reply.status(error.statusCode).send({ message: error.message });
     }
+    if ((error as any).name === 'NotFoundError') {
+      return reply.status(404).send({ message: error.message });
+    }
     fastify.log.error(error);
     reply.status(500).send({ message: 'Internal Server Error' });
   });

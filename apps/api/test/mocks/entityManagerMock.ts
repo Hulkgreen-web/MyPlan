@@ -36,9 +36,17 @@ export const createMockEntityManager = (
                 return userStore.find((u) => u.email === 'user1@example.com');
             }
             if (entity === Category || entity?.name === 'Category') {
-                const idToFind = typeof filter === 'string' ? filter : filter?.id;
-                return categoryStore.find((c) => c.id === idToFind);
+                if (typeof filter === 'string') {
+                    return categoryStore.find((c) => c.id === filter);
+                }
+                if (filter?.name) {
+                    return categoryStore.find((c) => c.name === filter.name);
+                }
+                if (filter?.id) {
+                    return categoryStore.find((c) => c.id === filter.id);
+                }
             }
+            return null;
         }),
 
         findOneOrFail: vi.fn().mockImplementation(async (entity: any, filter: any) => {
@@ -52,10 +60,12 @@ export const createMockEntityManager = (
 
             if (entity === Category || entity?.name === 'Category') {
                 const idToFind = typeof filter === 'string' ? filter : filter?.id;
-                const foundCategory = categoryStore.find((c) => c.id === idToFind);
+                const nameToFind = filter?.name;
+                const foundCategory = categoryStore.find((c) => (idToFind && c.id === idToFind) || (nameToFind && c.name === nameToFind));
                 if (!foundCategory) {
                     const error = new Error(`Category not found`);
                     (error as any).name = 'NotFoundError';
+                    (error as any).statusCode = 404;
                     throw error;
                 }
                 return foundCategory;
@@ -72,6 +82,7 @@ export const createMockEntityManager = (
             if (!found) {
                 const error = new Error(`Entity not found`);
                 (error as any).name = 'NotFoundError';
+                (error as any).statusCode = 404;
                 throw error;
             }
 
@@ -79,9 +90,28 @@ export const createMockEntityManager = (
         }),
 
         persist: vi.fn().mockImplementation((entity: any) => {
-            if (!entity.id) entity.id = `ts-1`;
+            if (entity instanceof Category || entity?.constructor?.name === 'Category' || entity?.estimatedAmount !== undefined) {
+                if (!entity.id) entity.id = `cat-${Date.now()}`;
+                categoryStore.push(entity);
+                return mockEm;
+            }
+            if (!entity.id) entity.id = `ts-${Date.now()}`;
             dbStore.push(entity);
             return mockEm;
+        }),
+
+        remove: vi.fn().mockImplementation((entity: any) => {
+            if (entity instanceof Category || entity?.constructor?.name === 'Category' || entity?.estimatedAmount !== undefined) {
+                categoryStore = categoryStore.filter((c) => c.id !== entity.id);
+            } else {
+                dbStore = dbStore.filter((ts) => ts.id !== entity.id);
+            }
+            return mockEm;
+        }),
+
+        assign: vi.fn().mockImplementation((entity: any, data: any) => {
+            Object.assign(entity, data);
+            return entity;
         }),
 
         flush: vi.fn().mockResolvedValue(undefined),

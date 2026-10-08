@@ -9,7 +9,7 @@ export class Category {
     @PrimaryKey({ type: 'uuid' })
     id : string = uuidv4();
 
-    @Property({ type: 'string', length: 100 })
+    @Property({ type: 'string', length: 100, unique: true })
     name!: string;
 
     @Property({ type: 'double' })

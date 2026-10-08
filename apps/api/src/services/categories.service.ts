@@ -35,9 +35,16 @@ export class CategoriesService {
   }
 
   /**
-   * Crée une nouvelle catégorie.
+   * Crée une nouvelle catégorie en garantissant l'unicité de son nom.
    */
   async create(data: CreateCategory): Promise<CategoryResponse> {
+    const existing = await this.em.findOne(Category, { name: data.name });
+    if (existing) {
+      const error = new Error(`Category with name "${data.name}" already exists`);
+      (error as any).statusCode = 400;
+      throw error;
+    }
+
     const category = new Category(data.name, data.estimatedAmount);
 
     this.em.persist(category);
@@ -47,7 +54,7 @@ export class CategoriesService {
   }
 
   /**
-   * Met à jour une catégorie existante.
+   * Met à jour une catégorie existante en vérifiant l'unicité du nouveau nom si modifié.
    */
   async update(id: string, data: UpdateCategory): Promise<CategoryResponse> {
     const category = await this.em.findOneOrFail(
@@ -55,6 +62,15 @@ export class CategoriesService {
       id,
       { populate: ['transactions'] as any }
     );
+
+    if (data.name && data.name !== category.name) {
+      const existing = await this.em.findOne(Category, { name: data.name });
+      if (existing) {
+        const error = new Error(`Category with name "${data.name}" already exists`);
+        (error as any).statusCode = 400;
+        throw error;
+      }
+    }
 
     this.em.assign(category, data);
     await this.em.flush();
