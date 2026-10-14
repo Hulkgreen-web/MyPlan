@@ -19,3 +19,6 @@ node_modules/
 
 # environment variables
 .env
+
+#Bruno files
+bruno/
