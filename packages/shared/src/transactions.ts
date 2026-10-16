@@ -9,6 +9,7 @@ export const TransactionSchema = z.object({
         message: 'Amount must have at most 2 decimal places',
     }),
     type: z.nativeEnum(TransactionType),
+    category: z.string(),
 });
 
 export const CreateTransactionSchema = TransactionSchema.pick({
@@ -16,6 +17,7 @@ export const CreateTransactionSchema = TransactionSchema.pick({
     transactionDate: true,
     amount: true,
     type: true,
+    category: true,
 });
 
 export const UpdateTransactionSchema = CreateTransactionSchema.partial();
@@ -26,6 +28,7 @@ export const TransactionResponseSchema = z.object({
     transactionDate: z.coerce.date(),
     amount: z.number(),
     type: z.string(),
+    category: z.string(),
 });
 
 export type Transaction = z.infer<typeof TransactionSchema>;
