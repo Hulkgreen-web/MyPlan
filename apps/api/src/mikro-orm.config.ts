@@ -3,9 +3,10 @@ import { User } from './entities/User.js';
 import { RefreshToken } from './entities/RefreshToken.js';
 import { Transaction } from './entities/Transaction.js';
 import { Category } from './entities/Category.js';
+import { Budget } from './entities/Budget.js';
 
 export default defineConfig({
-  entities: [User, RefreshToken, Transaction, Category],
+  entities: [User, RefreshToken, Transaction, Category, Budget],
   dbName: 'dev_db',
   user: 'root',
   password: 'password',
@@ -14,3 +15,4 @@ export default defineConfig({
   debug: false,
   allowGlobalContext: true, // Simplified for boilerplate
 });
+
