@@ -13,6 +13,7 @@ import { authRoutes } from './routes/auth/index.js';
 import { transactionRoutes } from './routes/transactions/index.js';
 import { usersRoutes } from './routes/users/index.js';
 import { categoriesRoutes } from './routes/categories/index.js';
+import { budgetRoutes } from './routes/budgets/index.js';
 
 export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
   const fastify = Fastify({
@@ -82,6 +83,8 @@ export const buildApp = async (orm?: MikroORM): Promise<FastifyInstance> => {
   await fastify.register(transactionRoutes, { em, prefix: '/transactions' });
   await fastify.register(usersRoutes, { em, prefix: '/users' });
   await fastify.register(categoriesRoutes, { em, prefix: '/categories' });
+
+  await fastify.register(budgetRoutes, { em, prefix: '/budget' });
 
   return fastify;
 };

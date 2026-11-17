@@ -3,6 +3,8 @@ import { TransactionMock, mockTransactionList } from './transactionsMock.js';
 import { mockUserList, UserMock } from './usersMock.js';
 import { CategoryMock, mockCategoryList } from './categoriesMock.js';
 import { Category } from '../../src/entities/Category.js';
+import { BudgetMock, mockBudgetList } from './budgetsMock.js';
+import { Budget } from '../../src/entities/Budget.js';
 
 export const createMockEntityManager = (
     initialData: TransactionMock[] = mockTransactionList,
@@ -12,6 +14,7 @@ export const createMockEntityManager = (
     let dbStore = [...initialData];
     let userStore = [...userMocks];
     let categoryStore = [...categoryMocks];
+    let budgetStore = [...mockBudgetList];
 
     const mockEm = {
         find: vi.fn().mockImplementation(async (entity: any, filter: any) => {
@@ -32,6 +35,11 @@ export const createMockEntityManager = (
         }),
 
         findOne: vi.fn().mockImplementation(async (entity: any, filter: any) => {
+            if (entity === Budget || entity?.name === 'Budget') {
+                const userId = typeof filter?.user === 'string' ? filter.user : filter?.user?.id;
+                return budgetStore.find((b) => b.userId === userId) || null;
+            }
+
             if (filter === 'user1@example.com' || filter?.email === 'user1@example.com') {
                 return userStore.find((u) => u.email === 'user1@example.com');
             }
@@ -89,6 +97,10 @@ export const createMockEntityManager = (
             return found;
         }),
 
+        assign: vi.fn().mockImplementation((entity: any, data: any) => {
+            return Object.assign(entity, data);
+        }),
+
         persist: vi.fn().mockImplementation((entity: any) => {
             if (entity instanceof Category || entity?.constructor?.name === 'Category' || entity?.estimatedAmount !== undefined) {
                 if (!entity.id) entity.id = `cat-${Date.now()}`;
@@ -109,17 +121,13 @@ export const createMockEntityManager = (
             return mockEm;
         }),
 
-        assign: vi.fn().mockImplementation((entity: any, data: any) => {
-            Object.assign(entity, data);
-            return entity;
-        }),
-
         flush: vi.fn().mockResolvedValue(undefined),
         fork: vi.fn().mockReturnThis(),
 
-        __resetStore: (newData = mockTransactionList, newCategories = mockCategoryList) => {
+        __resetStore: (newData = mockTransactionList, newCategories = mockCategoryList, newBudgets = mockBudgetList) => {
             dbStore = [...newData];
             categoryStore = [...newCategories];
+            budgetStore = newBudgets.map((b) => ({ ...b }));
         },
     };
 
